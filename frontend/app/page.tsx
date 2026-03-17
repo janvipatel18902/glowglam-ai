@@ -1,192 +1,313 @@
 import { Footer } from '@/components/layout/footer/Footer';
 import { Navbar } from '@/components/layout/navbar/Navbar';
-import { Button } from '@/components/ui/Button';
 import { Container } from '@/components/layout/container/Container';
+import { Button } from '@/components/ui/Button';
+import { MotionFade } from '@/components/ui/MotionFade';
+import { MotionStagger } from '@/components/ui/MotionStagger';
 
-const features = [
+const aiFeatures = [
   {
-    title: 'Smart Skin Test',
+    title: 'AI Skin Analysis',
     description:
-      'Upload your photo and get AI-powered skin insights with a guided and elegant analysis flow.',
+      'Upload a selfie and receive personalized skincare insights powered by AI.',
+    icon: '✦',
   },
   {
-    title: 'AI Beauty Chat',
+    title: 'Smart AI Chatbot',
     description:
-      'Ask skincare questions anytime and receive tailored recommendations and beauty guidance.',
+      'Ask skincare questions and get intelligent beauty guidance anytime.',
+    icon: '✧',
   },
   {
-    title: 'Product Discovery',
+    title: 'Personalized Routine',
     description:
-      'Explore skincare products and brands matched to your goals, concerns, and skin profile.',
-  },
-  {
-    title: 'Personal Dashboard',
-    description:
-      'Track your history, save favorites, and manage your skincare journey in one place.',
+      'Discover routines and product suggestions tailored to your skin needs.',
+    icon: '✩',
   },
 ];
 
+const products = [
+  {
+    name: 'Hydrating Serum',
+    brand: 'GlowSkin',
+    price: '$29',
+  },
+  {
+    name: 'Vitamin C Cream',
+    brand: 'Pure Beauty',
+    price: '$35',
+  },
+  {
+    name: 'Acne Repair Gel',
+    brand: 'ClearFace',
+    price: '$22',
+  },
+  {
+    name: 'Night Repair Oil',
+    brand: 'SkinLab',
+    price: '$41',
+  },
+];
+
+const brands = [
+  {
+    name: 'GlowSkin',
+    description: 'Radiance-focused skincare for glow and hydration.',
+  },
+  {
+    name: 'Pure Beauty',
+    description: 'Clean formulas designed for bright and healthy skin.',
+  },
+  {
+    name: 'ClearFace',
+    description: 'Targeted skincare for acne-prone and sensitive skin.',
+  },
+  {
+    name: 'SkinLab',
+    description: 'Advanced skincare solutions backed by smart beauty science.',
+  },
+];
+
+function SectionHeading({
+  title,
+  description,
+}: {
+  title: React.ReactNode;
+  description: string;
+}) {
+  return (
+    <MotionFade className="mx-auto max-w-3xl text-center">
+      <h2 className="text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">
+        {title}
+      </h2>
+
+      <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-slate-500 sm:text-lg sm:leading-8">
+        {description}
+      </p>
+    </MotionFade>
+  );
+}
+
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
+    <div className="min-h-screen text-slate-800">
       <Navbar />
 
       <main>
         <section className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(236,72,153,0.30),transparent_30%),radial-gradient(circle_at_right,rgba(168,85,247,0.22),transparent_28%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.12),transparent_24%)]" />
-          <div className="absolute left-1/2 top-24 h-72 w-72 -translate-x-1/2 rounded-full bg-pink-500/10 blur-3xl sm:h-96 sm:w-96" />
+          <div className="absolute inset-0 bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(244,114,182,0.16),transparent_24%),radial-gradient(circle_at_top_right,rgba(96,165,250,0.14),transparent_24%),radial-gradient(circle_at_bottom,rgba(168,85,247,0.10),transparent_28%)]" />
+          <div className="absolute left-[8%] top-[28%] h-24 w-24 rounded-full bg-pink-300/20 blur-3xl sm:h-36 sm:w-36" />
+          <div className="absolute right-[10%] top-[18%] h-24 w-24 rounded-full bg-blue-300/20 blur-3xl sm:h-40 sm:w-40" />
 
-          <Container className="relative py-16 sm:py-20 lg:py-28">
-            <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-              <div className="text-center lg:text-left">
-                <span className="inline-flex rounded-full border border-pink-400/20 bg-white/5 px-4 py-2 text-[10px] font-medium uppercase tracking-[0.24em] text-pink-200 sm:text-xs">
-                  AI-Powered Skincare Platform
+          <Container className="relative py-20 sm:py-24 lg:py-28 xl:py-32">
+            <div className="mx-auto max-w-5xl text-center">
+              <MotionFade>
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/80 px-5 py-3 text-sm font-semibold text-slate-600 shadow-[0_10px_25px_rgba(15,23,42,0.08)] backdrop-blur-xl">
+                  <span className="text-base text-violet-500">✧</span>
+                  AI Powered Skincare Platform
                 </span>
+              </MotionFade>
 
-                <h1 className="mt-6 text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl xl:text-7xl">
-                  Discover Your
-                  <span className="block bg-gradient-to-r from-pink-400 via-fuchsia-300 to-violet-300 bg-clip-text text-transparent">
+              <MotionFade delay={0.08}>
+                <h1 className="mt-8 text-5xl font-bold leading-[1.02] sm:text-6xl lg:text-7xl xl:text-[5.2rem]">
+                  <span className="bg-gradient-to-r from-pink-600 via-fuchsia-600 to-blue-600 bg-clip-text text-transparent">
+                    Discover Your
+                  </span>
+                  <br />
+                  <span className="bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600 bg-clip-text text-transparent">
                     Perfect Glow
                   </span>
                 </h1>
+              </MotionFade>
 
-                <p className="mx-auto mt-6 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base lg:mx-0 lg:text-lg">
-                  Upload your skin image, get smart facial analysis, explore
-                  skincare products, and chat with an AI beauty assistant built
-                  to guide your daily routine.
+              <MotionFade delay={0.14}>
+                <p className="mx-auto mt-8 max-w-3xl text-lg leading-8 text-slate-600 sm:text-xl sm:leading-9 lg:mt-9">
+                  Get personalized skincare recommendations powered by advanced AI.
+                  Your journey to radiant skin starts here.
                 </p>
+              </MotionFade>
 
-                <div className="mt-8 flex flex-col items-stretch justify-center gap-4 sm:flex-row lg:justify-start">
-                  <Button href="/skin-test" className="w-full sm:w-auto">
+              <MotionFade delay={0.2}>
+                <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:mt-12 sm:flex-row">
+                  <Button
+                    href="/skin-test"
+                    className="w-full max-w-[280px] px-8 py-4 text-base sm:w-auto sm:min-w-[280px] sm:text-lg"
+                  >
                     Start Skin Analysis
                   </Button>
 
                   <Button
                     href="/ai-chat"
                     variant="secondary"
-                    className="w-full sm:w-auto"
+                    className="w-full max-w-[220px] px-8 py-4 text-base sm:w-auto sm:min-w-[190px] sm:text-lg"
                   >
                     Chat with AI
                   </Button>
                 </div>
-
-                <div className="mt-8 flex flex-col gap-3 text-sm text-slate-300 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center lg:justify-start">
-                  <div className="inline-flex items-center gap-2">
-                    <span className="h-2.5 w-2.5 rounded-full bg-pink-400" />
-                    Smart facial scan
-                  </div>
-                  <div className="inline-flex items-center gap-2">
-                    <span className="h-2.5 w-2.5 rounded-full bg-violet-400" />
-                    AI skincare chat
-                  </div>
-                  <div className="inline-flex items-center gap-2">
-                    <span className="h-2.5 w-2.5 rounded-full bg-sky-400" />
-                    Personalized recommendations
-                  </div>
-                </div>
-              </div>
-
-              <div className="relative mx-auto w-full max-w-md lg:max-w-none">
-                <div className="absolute -left-6 top-8 h-24 w-24 rounded-full bg-pink-500/20 blur-2xl sm:h-32 sm:w-32" />
-                <div className="absolute -right-4 bottom-8 h-24 w-24 rounded-full bg-violet-500/20 blur-2xl sm:h-32 sm:w-32" />
-
-                <div className="relative rounded-[2rem] border border-white/10 bg-white/5 p-4 shadow-2xl shadow-pink-500/10 backdrop-blur-xl sm:p-6">
-                  <div className="rounded-[1.5rem] border border-white/10 bg-slate-900/80 p-4 sm:p-5">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-xs uppercase tracking-[0.2em] text-pink-200/80">
-                          Glow Scan
-                        </p>
-                        <h2 className="mt-2 text-lg font-semibold sm:text-xl">
-                          Skin Analysis Preview
-                        </h2>
-                      </div>
-                      <div className="rounded-full border border-pink-400/20 bg-pink-400/10 px-3 py-1 text-xs font-medium text-pink-200">
-                        Live AI
-                      </div>
-                    </div>
-
-                    <div className="mt-5 rounded-[1.25rem] border border-white/10 bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950 p-5">
-                      <div className="mx-auto flex h-52 w-40 items-center justify-center rounded-[999px] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(244,114,182,0.22),transparent_30%),linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] sm:h-64 sm:w-48">
-                        <div className="relative h-36 w-24 rounded-[999px] border border-pink-200/20 bg-white/5 sm:h-44 sm:w-28">
-                          <div className="absolute left-1/2 top-6 h-3 w-3 -translate-x-1/2 rounded-full bg-pink-300/80 blur-[1px]" />
-                          <div className="absolute left-5 top-12 h-2 w-2 rounded-full bg-white/60" />
-                          <div className="absolute right-5 top-12 h-2 w-2 rounded-full bg-white/60" />
-                          <div className="absolute left-1/2 top-20 h-10 w-8 -translate-x-1/2 rounded-full border border-pink-200/20" />
-                          <div className="absolute left-1/2 top-28 h-1.5 w-10 -translate-x-1/2 rounded-full bg-pink-200/40" />
-                          <div className="absolute left-3 top-16 h-12 w-12 rounded-full border border-pink-400/20" />
-                          <div className="absolute right-3 top-20 h-10 w-10 rounded-full border border-violet-400/20" />
-                        </div>
-                      </div>
-
-                      <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                        <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                          <p className="text-xs uppercase tracking-[0.2em] text-slate-400">
-                            Skin Type
-                          </p>
-                          <p className="mt-2 text-base font-semibold">
-                            Combination
-                          </p>
-                        </div>
-
-                        <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                          <p className="text-xs uppercase tracking-[0.2em] text-slate-400">
-                            AI Result
-                          </p>
-                          <p className="mt-2 text-base font-semibold">
-                            Hydration Needed
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4">
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-slate-300">Glow Score</span>
-                          <span className="font-semibold text-pink-200">
-                            86%
-                          </span>
-                        </div>
-                        <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
-                          <div className="h-full w-[86%] rounded-full bg-gradient-to-r from-pink-500 via-fuchsia-400 to-violet-400" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              </MotionFade>
             </div>
           </Container>
         </section>
 
-        <section className="py-14 sm:py-16 lg:py-20">
-          <Container>
-            <div className="mx-auto mb-10 max-w-2xl text-center">
-              <p className="text-sm uppercase tracking-[0.24em] text-pink-200/80">
-                Core Features
-              </p>
-              <h2 className="mt-3 text-3xl font-bold sm:text-4xl">
-                Everything you need for a smarter skincare journey
-              </h2>
-              <p className="mt-4 text-sm leading-7 text-slate-300 sm:text-base">
-                GlowGlam AI combines analysis, beauty guidance, product
-                discovery, and personal tracking in one elegant platform.
-              </p>
-            </div>
+        <section className="relative overflow-hidden py-20 sm:py-24 lg:py-28">
+          <div className="absolute inset-0 bg-gradient-to-b from-pink-50 to-blue-50" />
 
-            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-              {features.map((feature) => (
-                <div
+          <Container className="relative">
+            <SectionHeading
+              title={
+                <span className="bg-gradient-to-r from-pink-600 via-fuchsia-600 to-violet-600 bg-clip-text text-transparent">
+                  Powered by AI Technology
+                </span>
+              }
+              description="Experience the future of skincare with our intelligent features."
+            />
+
+            <MotionStagger className="mx-auto mt-12 grid max-w-6xl gap-6 md:grid-cols-2 xl:grid-cols-3">
+              {aiFeatures.map((feature) => (
+                <MotionFade
                   key={feature.title}
-                  className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:border-pink-400/20 hover:bg-white/8"
+                  className="h-full rounded-[1.75rem] border border-white/70 bg-white/85 p-6 shadow-[0_18px_38px_rgba(15,23,42,0.08)] transition duration-300 hover:-translate-y-1"
                 >
-                  <div className="mb-4 h-10 w-10 rounded-2xl bg-gradient-to-br from-pink-500/20 to-violet-500/20" />
-                  <h3 className="text-xl font-semibold">{feature.title}</h3>
-                  <p className="mt-3 text-sm leading-6 text-slate-300">
-                    {feature.description}
-                  </p>
-                </div>
+                  <div className="flex h-full flex-col">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-100 via-fuchsia-50 to-blue-100 text-2xl text-fuchsia-500 shadow-sm">
+                      {feature.icon}
+                    </div>
+
+                    <h3 className="mt-5 text-xl font-semibold text-slate-800">
+                      {feature.title}
+                    </h3>
+
+                    <p className="mt-3 text-sm leading-7 text-slate-500 sm:text-base">
+                      {feature.description}
+                    </p>
+                  </div>
+                </MotionFade>
               ))}
-            </div>
+            </MotionStagger>
+          </Container>
+        </section>
+
+        <section className="relative overflow-hidden py-20 sm:py-24 lg:py-28">
+          <div className="absolute inset-0 bg-gradient-to-br from-pink-100 to-blue-100" />
+
+          <Container className="relative">
+            <MotionFade className="mx-auto max-w-5xl">
+              <div className="rounded-[2.2rem] border border-white/70 bg-[linear-gradient(135deg,rgba(255,244,250,0.90)_0%,rgba(248,241,252,0.92)_48%,rgba(241,246,255,0.92)_100%)] px-6 py-14 text-center shadow-[0_24px_55px_rgba(15,23,42,0.10)] sm:px-10 sm:py-16 lg:px-16 lg:py-18">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-white/75 text-2xl text-fuchsia-500 shadow-sm">
+                  ✧
+                </div>
+
+                <h2 className="mt-6 text-3xl font-bold leading-tight sm:text-4xl lg:text-[2.8rem]">
+                  <span className="bg-gradient-to-r from-pink-600 via-fuchsia-600 to-violet-600 bg-clip-text text-transparent">
+                    Try Our AI Skin Analysis
+                  </span>
+                </h2>
+
+                <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-slate-500 sm:text-lg sm:leading-8">
+                  Upload your photo and get instant personalized insights about your skin.
+                </p>
+
+                <div className="mt-10">
+                  <Button
+                    href="/skin-test"
+                    className="px-8 py-4 text-base sm:px-10 sm:text-lg"
+                  >
+                    Start Skin Analysis
+                  </Button>
+                </div>
+              </div>
+            </MotionFade>
+          </Container>
+        </section>
+
+        <section className="relative overflow-hidden py-20 sm:py-24 lg:py-28">
+          <div className="absolute inset-0 bg-gradient-to-b from-blue-50 to-purple-50" />
+
+          <Container className="relative">
+            <SectionHeading
+              title={
+                <span className="bg-gradient-to-r from-pink-600 via-fuchsia-600 to-blue-600 bg-clip-text text-transparent">
+                  Popular Products
+                </span>
+              }
+              description="Recommended by AI for your skin goals and daily routine."
+            />
+
+            <MotionStagger className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {products.map((product) => (
+                <MotionFade
+                  key={product.name}
+                  className="h-full rounded-[1.75rem] border border-white/70 bg-white/85 p-5 shadow-[0_18px_38px_rgba(15,23,42,0.08)] transition duration-300 hover:-translate-y-1"
+                >
+                  <div className="flex h-full flex-col">
+                    <div className="h-44 rounded-2xl bg-gradient-to-br from-pink-200 via-fuchsia-100 to-blue-200" />
+
+                    <h3 className="mt-5 text-lg font-semibold text-slate-800">
+                      {product.name}
+                    </h3>
+
+                    <p className="mt-1 text-sm text-slate-500">{product.brand}</p>
+
+                    <p className="mt-3 text-lg font-bold text-slate-800">
+                      {product.price}
+                    </p>
+
+                    <button
+                      type="button"
+                      className="mt-4 w-full rounded-full bg-gradient-to-r from-pink-500 via-fuchsia-500 to-blue-500 px-4 py-3 text-sm font-semibold text-white shadow-[0_10px_25px_rgba(168,85,247,0.20)] transition hover:opacity-95"
+                    >
+                      View
+                    </button>
+                  </div>
+                </MotionFade>
+              ))}
+            </MotionStagger>
+          </Container>
+        </section>
+
+        <section className="relative overflow-hidden py-20 sm:py-24 lg:py-28">
+          <div className="absolute inset-0 bg-gradient-to-b from-purple-50 to-pink-50" />
+
+          <Container className="relative">
+            <SectionHeading
+              title={
+                <span className="bg-gradient-to-r from-pink-600 via-fuchsia-600 to-violet-600 bg-clip-text text-transparent">
+                  Featured Brands
+                </span>
+              }
+              description="Explore trusted skincare brands curated for different skin needs."
+            />
+
+            <MotionStagger className="mt-12 grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+              {brands.map((brand) => (
+                <MotionFade
+                  key={brand.name}
+                  className="h-full rounded-[1.75rem] border border-white/70 bg-white/85 p-6 text-center shadow-[0_18px_38px_rgba(15,23,42,0.08)] transition duration-300 hover:-translate-y-1"
+                >
+                  <div className="flex h-full flex-col">
+                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-100 via-fuchsia-50 to-blue-100 text-2xl font-bold text-fuchsia-600 shadow-sm">
+                      {brand.name.charAt(0)}
+                    </div>
+
+                    <h3 className="mt-5 text-xl font-semibold text-slate-800">
+                      {brand.name}
+                    </h3>
+
+                    <p className="mt-3 text-sm leading-7 text-slate-500">
+                      {brand.description}
+                    </p>
+
+                    <button
+                      type="button"
+                      className="mt-5 rounded-full border border-fuchsia-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-fuchsia-50"
+                    >
+                      Explore Brand
+                    </button>
+                  </div>
+                </MotionFade>
+              ))}
+            </MotionStagger>
           </Container>
         </section>
       </main>
