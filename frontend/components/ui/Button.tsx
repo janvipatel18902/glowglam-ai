@@ -13,10 +13,10 @@ type ButtonProps = {
 
 const variantClasses: Record<ButtonVariant, string> = {
     primary:
-        'bg-gradient-to-r from-pink-500 via-fuchsia-500 to-blue-500 text-white shadow-[0_10px_30px_rgba(168,85,247,0.22)] hover:opacity-95',
+        'bg-gradient-to-r from-pink-500 via-fuchsia-500 to-violet-500 text-white shadow-[0_8px_18px_rgba(236,72,153,0.16)] hover:opacity-95',
     secondary:
-        'bg-white text-slate-700 border border-slate-200 shadow-[0_8px_24px_rgba(15,23,42,0.08)] hover:bg-slate-50',
-    ghost: 'bg-transparent text-slate-700 hover:bg-white/60',
+        'border border-[#eadff0] bg-white text-slate-700 shadow-[0_6px_18px_rgba(15,23,42,0.05)] hover:bg-[#faf7fb]',
+    ghost: 'bg-transparent text-slate-700 hover:bg-[#faf7fb]',
 };
 
 export function Button({
@@ -27,7 +27,7 @@ export function Button({
     className = '',
     onClick,
 }: ButtonProps) {
-    const classes = `inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold transition-all duration-200 ${variantClasses[variant]} ${className}`;
+    const classes = `inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold transition-all duration-200 ${variantClasses[variant]} ${className}`;
 
     if (href) {
         return (

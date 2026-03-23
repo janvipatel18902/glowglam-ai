@@ -6,31 +6,31 @@ type Brand = {
 
 export function BrandDetailsCard({ brand }: { brand: Brand }) {
     return (
-        <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-xl shadow-pink-500/10 backdrop-blur-xl">
-            <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-pink-500/20 to-violet-500/20 text-3xl font-bold text-white">
+        <div className="rounded-[1.25rem] border border-[#eadff0] bg-white p-5 shadow-[0_8px_24px_rgba(15,23,42,0.05)] sm:p-6">
+            <div className="flex h-14 w-14 items-center justify-center rounded-[1rem] bg-gradient-to-br from-pink-500 to-violet-500 text-2xl font-bold text-white shadow-md">
                 {brand.name.charAt(0)}
             </div>
 
-            <h1 className="mt-6 text-3xl font-bold text-white sm:text-4xl">
+            <h1 className="mt-5 text-2xl font-semibold text-slate-800 sm:text-3xl">
                 {brand.name}
             </h1>
 
-            <p className="mt-3 text-sm leading-7 text-slate-300 sm:text-base">
+            <p className="mt-4 text-sm leading-7 text-slate-500">
                 {brand.description}
             </p>
 
-            <div className="mt-6 rounded-2xl border border-white/10 bg-slate-900/70 p-4">
-                <p className="text-xs uppercase tracking-[0.2em] text-slate-400">
+            <div className="mt-5 rounded-[1rem] border border-[#eee6f1] bg-[#fcfbfd] p-4">
+                <p className="text-[11px] uppercase tracking-[0.18em] text-slate-400">
                     Brand Focus
                 </p>
-                <p className="mt-2 text-base font-semibold text-white">
+                <p className="mt-2 text-sm font-semibold text-slate-700">
                     {brand.focus}
                 </p>
             </div>
 
             <button
                 type="button"
-                className="mt-6 rounded-full bg-pink-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-pink-600"
+                className="mt-5 rounded-full bg-gradient-to-r from-pink-500 to-violet-500 px-5 py-3 text-sm font-semibold text-white transition hover:opacity-95"
             >
                 Explore Products
             </button>

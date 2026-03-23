@@ -17,7 +17,7 @@ export function Input({
 }: InputProps) {
     return (
         <div className="w-full">
-            <label className="mb-2 block text-sm font-medium text-slate-200">
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
                 {label}
             </label>
 
@@ -26,11 +26,13 @@ export function Input({
                 name={name}
                 placeholder={placeholder}
                 required={required}
-                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-400 focus:border-pink-400/40 focus:bg-white/8"
+                className="w-full rounded-2xl border border-[#ddd3e8] bg-white px-4 py-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-fuchsia-400 focus:ring-2 focus:ring-fuchsia-100"
             />
 
             {helperText ? (
-                <p className="mt-2 text-xs text-slate-400">{helperText}</p>
+                <p className="mt-2 text-xs text-slate-500">
+                    {helperText}
+                </p>
             ) : null}
         </div>
     );

@@ -5,22 +5,26 @@ type Brand = {
 
 export function BrandCard({ brand }: { brand: Brand }) {
     return (
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-pink-400/20 hover:bg-white/8">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-500/20 to-violet-500/20 text-xl font-bold text-white">
-                {brand.name.charAt(0)}
+        <div className="rounded-[1.1rem] border border-[#eadff0] bg-white p-5 text-center shadow-[0_8px_24px_rgba(15,23,42,0.04)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_14px_34px_rgba(236,72,153,0.10)]">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[linear-gradient(135deg,#fde7f3_0%,#f1e7ff_55%,#e8f1ff_100%)] shadow-sm">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-violet-500 text-sm font-bold text-white">
+                    {brand.name.charAt(0)}
+                </div>
             </div>
 
-            <h3 className="mt-5 text-xl font-semibold text-white">{brand.name}</h3>
+            <h3 className="mt-4 text-base font-semibold text-slate-800">
+                {brand.name}
+            </h3>
 
-            <p className="mt-3 text-sm leading-6 text-slate-300">
+            <p className="mt-2 text-sm leading-6 text-slate-500">
                 {brand.description}
             </p>
 
             <button
                 type="button"
-                className="mt-5 rounded-full bg-pink-500 px-5 py-2 text-sm font-semibold text-white transition hover:bg-pink-600"
+                className="mt-5 rounded-full border border-[#eadff0] bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-[#faf7fb]"
             >
-                View Brand
+                View Products →
             </button>
         </div>
     );

@@ -9,11 +9,12 @@ import { AuthCard } from '@/components/ui/AuthCard';
 
 export default function SignupPage() {
     return (
-        <div className="min-h-screen bg-slate-950 text-white">
+        <div className="min-h-screen text-slate-800">
             <Navbar />
 
             <main className="relative overflow-hidden">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(236,72,153,0.22),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(168,85,247,0.16),transparent_25%)]" />
+                <div className="absolute inset-0 bg-[linear-gradient(135deg,#f8edf3_0%,#f4eef8_50%,#edf3fb_100%)]" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(236,72,153,0.10),transparent_26%),radial-gradient(circle_at_bottom_left,rgba(168,85,247,0.08),transparent_24%)]" />
 
                 <Container className="relative py-12 sm:py-16 lg:py-20">
                     <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
@@ -55,10 +56,10 @@ export default function SignupPage() {
                                         required
                                     />
 
-                                    <label className="flex items-start gap-3 text-sm leading-6 text-slate-300">
+                                    <label className="flex items-start gap-3 text-sm leading-6 text-slate-500">
                                         <input
                                             type="checkbox"
-                                            className="mt-1 h-4 w-4 rounded border-white/20 bg-transparent"
+                                            className="mt-1 h-4 w-4 rounded border-[#d9cfe3] bg-white"
                                         />
                                         <span>
                                             I agree to the terms and privacy policy of GlowGlam AI.
@@ -67,11 +68,11 @@ export default function SignupPage() {
 
                                     <Button className="w-full">Create Account</Button>
 
-                                    <p className="text-center text-sm text-slate-300">
+                                    <p className="text-center text-sm text-slate-500">
                                         Already have an account?{' '}
                                         <Link
                                             href="/login"
-                                            className="font-medium text-pink-200 transition hover:text-pink-100"
+                                            className="font-medium text-fuchsia-600 transition hover:text-fuchsia-700"
                                         >
                                             Login
                                         </Link>
@@ -81,15 +82,15 @@ export default function SignupPage() {
                         </div>
 
                         <div className="max-w-xl">
-                            <span className="inline-flex rounded-full border border-pink-400/20 bg-white/5 px-4 py-2 text-[10px] font-medium uppercase tracking-[0.24em] text-pink-200 sm:text-xs">
+                            <span className="inline-flex rounded-full border border-[#eadff0] bg-white px-4 py-2 text-[10px] font-medium uppercase tracking-[0.24em] text-fuchsia-600 shadow-sm sm:text-xs">
                                 Start Your Glow
                             </span>
 
-                            <h2 className="mt-6 text-4xl font-bold leading-tight sm:text-5xl">
+                            <h2 className="mt-6 text-4xl font-bold leading-tight text-slate-800 sm:text-5xl">
                                 Build your personalized AI beauty profile
                             </h2>
 
-                            <p className="mt-5 text-sm leading-7 text-slate-300 sm:text-base">
+                            <p className="mt-5 text-sm leading-7 text-slate-500 sm:text-base">
                                 Create your account to unlock facial skin analysis, AI beauty
                                 chat, product recommendations, and a dashboard built for your
                                 skincare routine.
@@ -103,7 +104,7 @@ export default function SignupPage() {
                                 ].map((item) => (
                                     <div
                                         key={item}
-                                        className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-slate-200"
+                                        className="rounded-2xl border border-[#eadff0] bg-white p-4 text-sm text-slate-600 shadow-[0_8px_24px_rgba(15,23,42,0.04)]"
                                     >
                                         {item}
                                     </div>

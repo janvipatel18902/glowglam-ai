@@ -1,31 +1,26 @@
+const info = [
+    { label: 'Skin Type', value: 'All Skin Types' },
+    { label: 'Usage', value: 'Daily' },
+    { label: 'Category', value: 'Serum' },
+    { label: 'AI Recommended', value: 'Yes' },
+];
+
 export function ProductInfo() {
     return (
-        <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6">
-
-            <h2 className="text-xl font-semibold text-white">
-                Product Info
-            </h2>
-
-            <div className="mt-4 space-y-3">
-
-                <div className="rounded-xl bg-slate-900/70 p-3 text-sm text-slate-300">
-                    Skin Type: All
+        <div className="space-y-3">
+            {info.map((item) => (
+                <div
+                    key={item.label}
+                    className="rounded-[1rem] border border-[#eee6f1] bg-[#fcfbfd] p-4"
+                >
+                    <p className="text-[11px] uppercase tracking-[0.18em] text-slate-400">
+                        {item.label}
+                    </p>
+                    <p className="mt-2 text-sm font-semibold text-slate-700">
+                        {item.value}
+                    </p>
                 </div>
-
-                <div className="rounded-xl bg-slate-900/70 p-3 text-sm text-slate-300">
-                    Usage: Daily
-                </div>
-
-                <div className="rounded-xl bg-slate-900/70 p-3 text-sm text-slate-300">
-                    Category: Serum
-                </div>
-
-                <div className="rounded-xl bg-slate-900/70 p-3 text-sm text-slate-300">
-                    AI Recommended: Yes
-                </div>
-
-            </div>
-
+            ))}
         </div>
     );
 }

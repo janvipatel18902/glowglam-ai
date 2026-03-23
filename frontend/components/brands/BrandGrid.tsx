@@ -2,34 +2,34 @@ import { BrandCard } from './BrandCard';
 
 const brands = [
     {
-        name: 'GlowLab',
-        description: 'Modern skincare products focused on hydration and glow.',
+        name: 'GlowGlam',
+        description: 'Glow Radiance +',
     },
     {
-        name: 'SkinPro',
-        description: 'Science-backed skincare for brightening and daily care.',
+        name: 'Radiance Co',
+        description: 'Glow Radiance +',
     },
     {
-        name: 'PureFace',
-        description: 'Gentle and clean skincare for acne-prone and sensitive skin.',
+        name: 'Pure Beauty',
+        description: 'View Products +',
     },
     {
-        name: 'DermaX',
-        description: 'Targeted treatment solutions for repair and recovery.',
+        name: 'Youth Labs',
+        description: 'View Products +',
     },
     {
-        name: 'SunCare',
-        description: 'Daily sun protection with lightweight skincare formulas.',
+        name: 'Sun Shield',
+        description: 'View Products +',
     },
     {
-        name: 'LumiSkin',
-        description: 'Beauty-first skincare designed for radiance and softness.',
+        name: 'Derma Care',
+        description: 'View Products +',
     },
 ];
 
 export function BrandGrid() {
     return (
-        <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {brands.map((brand) => (
                 <BrandCard key={brand.name} brand={brand} />
             ))}
