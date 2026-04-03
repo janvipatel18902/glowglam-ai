@@ -550,6 +550,27 @@ export default function SkinTestPage() {
                 </p>
               </div>
 
+              <div className="mt-6 rounded-2xl border border-violet-100 bg-violet-50/80 p-4 text-left">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-violet-700">
+                      ✨ AI chat now uses your latest skin test
+                    </p>
+                    <p className="mt-1 text-sm text-slate-600">
+                      Ask follow-up questions and get more personalized skincare advice.
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => router.push('/ai-chat')}
+                    className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 px-5 py-2.5 text-sm font-semibold text-white shadow transition hover:scale-[1.02]"
+                  >
+                    Ask AI Chat
+                  </button>
+                </div>
+              </div>
+
               <div className="mt-8 grid gap-4 sm:grid-cols-3">
                 <div className="rounded-2xl border border-pink-100 bg-pink-50/70 p-5">
                   <p className="text-xs uppercase tracking-[0.2em] text-slate-500">

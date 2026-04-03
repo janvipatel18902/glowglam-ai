@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 
-import { Navbar } from "@/components/layout/navbar/Navbar";
-import { Footer } from "@/components/layout/footer/Footer";
-import { Container } from "@/components/layout/container/Container";
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { getAccessToken } from "@/lib/auth";
-import { getSkinTestById } from "@/lib/skin-test-api";
+import { Navbar } from '@/components/layout/navbar/Navbar';
+import { Footer } from '@/components/layout/footer/Footer';
+import { Container } from '@/components/layout/container/Container';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { getAccessToken } from '@/lib/auth';
+import { getSkinTestById } from '@/lib/skin-test-api';
 
 type SkinTestDetail = {
   id: string;
@@ -33,29 +33,43 @@ type SkinTestDetail = {
   }>;
 };
 
+function formatLabel(value?: string | null) {
+  if (!value) return 'N/A';
+
+  return value
+    .replaceAll('_', ' ')
+    .split(' ')
+    .map((word) => {
+      if (!word) return word;
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join(' ');
+}
+
 export default function SkinTestDetailPage() {
   const params = useParams();
-  const id = typeof params.id === "string" ? params.id : "";
+  const router = useRouter();
+  const id = typeof params.id === 'string' ? params.id : '';
 
   const [result, setResult] = useState<SkinTestDetail | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   useEffect(() => {
     async function fetchDetail() {
       try {
         setLoading(true);
-        setError("");
+        setError('');
 
         const token = getAccessToken();
 
         if (!token) {
-          setError("You must be logged in to view this skin test.");
+          setError('You must be logged in to view this skin test.');
           return;
         }
 
         if (!id) {
-          setError("Skin test ID is missing.");
+          setError('Skin test ID is missing.');
           return;
         }
 
@@ -63,7 +77,7 @@ export default function SkinTestDetailPage() {
         setResult(data);
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Failed to load skin test",
+          err instanceof Error ? err.message : 'Failed to load skin test',
         );
       } finally {
         setLoading(false);
@@ -98,8 +112,29 @@ export default function SkinTestDetailPage() {
                     Skin Test Report
                   </h1>
                   <p className="mt-4 text-slate-500">
-                    {result.summary || "Analysis completed successfully."}
+                    {result.summary || 'Analysis completed successfully.'}
                   </p>
+                </div>
+
+                <div className="mt-6 rounded-2xl border border-violet-100 bg-violet-50/80 p-4 text-left">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <p className="text-sm font-semibold text-violet-700">
+                        ✨ AI chat can use this skin test
+                      </p>
+                      <p className="mt-1 text-sm text-slate-600">
+                        Open AI chat to ask follow-up questions based on this result.
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => router.push('/ai-chat')}
+                      className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 px-5 py-2.5 text-sm font-semibold text-white shadow transition hover:scale-[1.02]"
+                    >
+                      Ask AI Chat
+                    </button>
+                  </div>
                 </div>
 
                 {result.images?.[0]?.imageUrl ? (
@@ -115,8 +150,8 @@ export default function SkinTestDetailPage() {
                     <p className="text-xs uppercase tracking-[0.2em] text-slate-500">
                       Skin Type
                     </p>
-                    <p className="mt-2 text-lg font-semibold capitalize text-slate-800">
-                      {result.resultJson?.skincare?.skinType || "N/A"}
+                    <p className="mt-2 text-lg font-semibold text-slate-800">
+                      {formatLabel(result.resultJson?.skincare?.skinType)}
                     </p>
                   </div>
 
@@ -124,8 +159,8 @@ export default function SkinTestDetailPage() {
                     <p className="text-xs uppercase tracking-[0.2em] text-slate-500">
                       Sensitivity
                     </p>
-                    <p className="mt-2 text-lg font-semibold capitalize text-slate-800">
-                      {result.resultJson?.skincare?.sensitivity || "N/A"}
+                    <p className="mt-2 text-lg font-semibold text-slate-800">
+                      {formatLabel(result.resultJson?.skincare?.sensitivity)}
                     </p>
                   </div>
 
@@ -136,9 +171,9 @@ export default function SkinTestDetailPage() {
                     <p className="mt-2 text-lg font-semibold text-slate-800">
                       {result.resultJson?.skincare?.confidence
                         ? `${Math.round(
-                            result.resultJson.skincare.confidence * 100,
-                          )}%`
-                        : "N/A"}
+                          result.resultJson.skincare.confidence * 100,
+                        )}%`
+                        : 'N/A'}
                     </p>
                   </div>
                 </div>
@@ -153,9 +188,9 @@ export default function SkinTestDetailPage() {
                       result.resultJson.skincare.concerns.map((concern) => (
                         <span
                           key={concern}
-                          className="rounded-full border border-pink-200 bg-pink-50 px-4 py-2 text-sm font-medium capitalize text-pink-700"
+                          className="rounded-full border border-pink-200 bg-pink-50 px-4 py-2 text-sm font-medium text-pink-700"
                         >
-                          {concern.replaceAll("_", " ")}
+                          {formatLabel(concern)}
                         </span>
                       ))
                     ) : (

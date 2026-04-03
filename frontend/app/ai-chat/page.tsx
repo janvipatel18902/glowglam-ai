@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Footer } from '@/components/layout/footer/Footer';
 import { Navbar } from '@/components/layout/navbar/Navbar';
@@ -11,7 +11,7 @@ import {
   createChatSession,
   getChatSessionById,
   getChatSessions,
-  sendChatMessage,
+  streamChatMessage,
   type ChatMessage,
 } from '@/lib/chat-api';
 
@@ -22,6 +22,10 @@ const suggestions = [
   'Should I use retinol?',
 ];
 
+type UiMessage = ChatMessage & {
+  pending?: boolean;
+};
+
 function formatTime(dateString: string) {
   return new Date(dateString).toLocaleTimeString([], {
     hour: '2-digit',
@@ -29,15 +33,30 @@ function formatTime(dateString: string) {
   });
 }
 
+function createTempMessage(role: 'user' | 'assistant', content: string): UiMessage {
+  return {
+    id: `temp-${role}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    role,
+    content,
+    createdAt: new Date().toISOString(),
+    pending: true,
+  };
+}
+
 export default function AiChatPage() {
   const [sessionId, setSessionId] = useState<string | null>(null);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<UiMessage[]>([]);
   const [input, setInput] = useState('');
   const [loadingSession, setLoadingSession] = useState(true);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
+
+  const canSend = useMemo(
+    () => !sending && !loadingSession && !!input.trim(),
+    [sending, loadingSession, input],
+  );
 
   useEffect(() => {
     async function bootstrapChat() {
@@ -80,11 +99,27 @@ export default function AiChatPage() {
       behavior: 'smooth',
       block: 'end',
     });
-  }, [messages]);
+  }, [messages, sending]);
+
+  async function syncSessionMessages(activeSessionId: string, token: string) {
+    const sessionRes = await getChatSessionById(activeSessionId, token);
+    setMessages(sessionRes.session.messages);
+  }
 
   async function sendMessage(text: string) {
     const trimmed = text.trim();
-    if (!trimmed) return;
+    if (!trimmed || sending) return;
+
+    const optimisticUser = createTempMessage('user', trimmed);
+    const assistantId = `temp-assistant-${Date.now()}`;
+
+    const optimisticAssistant: UiMessage = {
+      id: assistantId,
+      role: 'assistant',
+      content: '',
+      createdAt: new Date().toISOString(),
+      pending: true,
+    };
 
     try {
       setSending(true);
@@ -97,6 +132,9 @@ export default function AiChatPage() {
         return;
       }
 
+      setMessages((prev) => [...prev, optimisticUser, optimisticAssistant]);
+      setInput('');
+
       let activeSessionId = sessionId;
 
       if (!activeSessionId) {
@@ -105,11 +143,29 @@ export default function AiChatPage() {
         setSessionId(activeSessionId);
       }
 
-      const response = await sendChatMessage(activeSessionId, trimmed, token);
-      setMessages((prev) => [...prev, ...response.messages]);
-      setInput('');
+      await streamChatMessage(activeSessionId, trimmed, token, (chunk) => {
+        setMessages((prev) =>
+          prev.map((message) =>
+            message.id === assistantId
+              ? {
+                ...message,
+                content: message.content + chunk,
+              }
+              : message,
+          ),
+        );
+      });
+
+      await syncSessionMessages(activeSessionId, token);
       window.dispatchEvent(new Event('chat-changed'));
     } catch (err) {
+      setMessages((prev) =>
+        prev.filter(
+          (message) =>
+            message.id !== optimisticUser.id && message.id !== assistantId,
+        ),
+      );
+
       setError(err instanceof Error ? err.message : 'Failed to send message');
     } finally {
       setSending(false);
@@ -207,10 +263,10 @@ export default function AiChatPage() {
                                 className={`rounded-[1.25rem] px-4 py-3.5 shadow-sm sm:rounded-[1.5rem] sm:px-5 sm:py-4 ${isAi
                                     ? 'bg-slate-50 text-slate-700'
                                     : 'bg-gradient-to-r from-pink-500 via-fuchsia-500 to-blue-500 text-white'
-                                  }`}
+                                  } ${message.pending ? 'opacity-80' : ''}`}
                               >
-                                <p className="text-sm leading-6 sm:text-base sm:leading-8">
-                                  {message.content}
+                                <p className="whitespace-pre-wrap text-sm leading-6 sm:text-base sm:leading-8">
+                                  {message.content || (message.pending ? '...' : '')}
                                 </p>
                               </div>
                             </div>
@@ -259,10 +315,10 @@ export default function AiChatPage() {
 
                     <button
                       type="submit"
-                      disabled={sending || loadingSession || !input.trim()}
-                      className="inline-flex h-12 w-full items-center justify-center rounded-full bg-gradient-to-r from-pink-400 via-fuchsia-400 to-blue-400 px-6 text-lg text-white shadow-md transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60 sm:h-14 sm:w-auto sm:min-w-[78px] sm:px-0 sm:text-xl"
+                      disabled={!canSend}
+                      className="inline-flex h-12 w-full items-center justify-center rounded-full bg-gradient-to-r from-pink-400 via-fuchsia-400 to-blue-400 px-6 text-lg text-white shadow-md transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60 sm:h-14 sm:w-auto sm:min-w-[96px] sm:px-0 sm:text-base"
                     >
-                      {sending ? '...' : '↗'}
+                      {sending ? 'Thinking...' : 'Send'}
                     </button>
                   </form>
                 </div>

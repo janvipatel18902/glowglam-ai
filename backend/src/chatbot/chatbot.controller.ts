@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
+import type { Response } from 'express';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ChatbotService } from './chatbot.service';
 import { CreateChatMessageDto } from './dto/create-chat-message.dto';
@@ -33,5 +43,29 @@ export class ChatbotController {
     @Req() req: { user: { id: string } },
   ) {
     return this.chatbotService.sendMessage(id, req.user.id, dto.content);
+  }
+
+  @Post('sessions/:id/messages/stream')
+  async sendMessageStream(
+    @Param('id') id: string,
+    @Body() dto: CreateChatMessageDto,
+    @Req() req: { user: { id: string } },
+    @Res() res: Response,
+  ) {
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    res.setHeader('Transfer-Encoding', 'chunked');
+    res.setHeader('Cache-Control', 'no-cache, no-transform');
+    res.setHeader('Connection', 'keep-alive');
+
+    await this.chatbotService.sendMessageStream(
+      id,
+      req.user.id,
+      dto.content,
+      (chunk) => {
+        res.write(chunk);
+      },
+    );
+
+    res.end();
   }
 }
