@@ -16,7 +16,7 @@ import { CreateChatMessageDto } from './dto/create-chat-message.dto';
 @Controller('chat')
 @UseGuards(JwtAuthGuard)
 export class ChatbotController {
-  constructor(private readonly chatbotService: ChatbotService) { }
+  constructor(private readonly chatbotService: ChatbotService) {}
 
   @Post('sessions')
   createSession(@Req() req: { user: { id: string } }) {

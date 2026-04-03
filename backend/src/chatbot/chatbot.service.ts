@@ -25,7 +25,7 @@ export class ChatbotService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly ollamaService: OllamaService,
-  ) { }
+  ) {}
 
   async createSession(userId: string) {
     const session = await this.prisma.chatSession.create({
@@ -251,9 +251,7 @@ export class ChatbotService {
     return trimmedContent;
   }
 
-  private async getHistoryForModel(
-    sessionId: string,
-  ): Promise<
+  private async getHistoryForModel(sessionId: string): Promise<
     {
       role: ChatRole;
       content: string;
@@ -275,7 +273,9 @@ export class ChatbotService {
     }));
   }
 
-  private async getLatestSkinContext(userId: string): Promise<SkinContext | null> {
+  private async getLatestSkinContext(
+    userId: string,
+  ): Promise<SkinContext | null> {
     const latestSkinTest = await this.prisma.skinTest.findFirst({
       where: {
         userId,
@@ -295,13 +295,13 @@ export class ChatbotService {
 
     const result = latestSkinTest.resultJson as
       | {
-        skincare?: {
-          skinType?: string;
-          sensitivity?: string;
-          concerns?: string[];
-          confidence?: number;
-        };
-      }
+          skincare?: {
+            skinType?: string;
+            sensitivity?: string;
+            concerns?: string[];
+            confidence?: number;
+          };
+        }
       | null
       | undefined;
 
@@ -326,14 +326,16 @@ User skin test context:
 - summary: ${skinContext.summary ?? 'Not available'}
 - skin type: ${skinContext.skinType ?? 'Not available'}
 - sensitivity: ${skinContext.sensitivity ?? 'Not available'}
-- concerns: ${skinContext.concerns.length > 0
-        ? skinContext.concerns.join(', ')
-        : 'Not available'
-      }
-- recommended focus: ${skinContext.recommendations.length > 0
-        ? skinContext.recommendations.map((item) => item.title).join(', ')
-        : 'Not available'
-      }
+- concerns: ${
+          skinContext.concerns.length > 0
+            ? skinContext.concerns.join(', ')
+            : 'Not available'
+        }
+- recommended focus: ${
+          skinContext.recommendations.length > 0
+            ? skinContext.recommendations.map((item) => item.title).join(', ')
+            : 'Not available'
+        }
 
 Use this skin test context when relevant.
 `
@@ -384,9 +386,7 @@ Keep the response under 100 words.
     if (currentTitle && currentTitle !== 'New Chat') return;
 
     const nextTitle =
-      userMessage.length > 40
-        ? `${userMessage.slice(0, 40)}...`
-        : userMessage;
+      userMessage.length > 40 ? `${userMessage.slice(0, 40)}...` : userMessage;
 
     await this.prisma.chatSession.update({
       where: { id: sessionId },

@@ -10,4 +10,4 @@ import { OllamaService } from './ollama.service';
   providers: [ChatbotService, OllamaService],
   exports: [ChatbotService],
 })
-export class ChatbotModule { }
+export class ChatbotModule {}
