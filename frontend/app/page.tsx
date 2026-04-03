@@ -1,70 +1,70 @@
-import { Footer } from '@/components/layout/footer/Footer';
-import { Navbar } from '@/components/layout/navbar/Navbar';
-import { Container } from '@/components/layout/container/Container';
-import { Button } from '@/components/ui/Button';
-import { MotionFade } from '@/components/ui/MotionFade';
-import { MotionStagger } from '@/components/ui/MotionStagger';
+import { Footer } from "@/components/layout/footer/Footer";
+import { Navbar } from "@/components/layout/navbar/Navbar";
+import { Container } from "@/components/layout/container/Container";
+import { Button } from "@/components/ui/Button";
+import { MotionFade } from "@/components/ui/MotionFade";
+import { MotionStagger } from "@/components/ui/MotionStagger";
 
 const aiFeatures = [
   {
-    title: 'AI Skin Analysis',
+    title: "AI Skin Analysis",
     description:
-      'Upload a selfie and receive personalized skincare insights powered by AI.',
-    icon: '✦',
+      "Upload a selfie and receive personalized skincare insights powered by AI.",
+    icon: "✦",
   },
   {
-    title: 'Smart AI Chatbot',
+    title: "Smart AI Chatbot",
     description:
-      'Ask skincare questions and get intelligent beauty guidance anytime.',
-    icon: '✧',
+      "Ask skincare questions and get intelligent beauty guidance anytime.",
+    icon: "✧",
   },
   {
-    title: 'Personalized Routine',
+    title: "Personalized Routine",
     description:
-      'Discover routines and product suggestions tailored to your skin needs.',
-    icon: '✩',
+      "Discover routines and product suggestions tailored to your skin needs.",
+    icon: "✩",
   },
 ];
 
 const products = [
   {
-    name: 'Hydrating Serum',
-    brand: 'GlowSkin',
-    price: '$29',
+    name: "Hydrating Serum",
+    brand: "GlowSkin",
+    price: "$29",
   },
   {
-    name: 'Vitamin C Cream',
-    brand: 'Pure Beauty',
-    price: '$35',
+    name: "Vitamin C Cream",
+    brand: "Pure Beauty",
+    price: "$35",
   },
   {
-    name: 'Acne Repair Gel',
-    brand: 'ClearFace',
-    price: '$22',
+    name: "Acne Repair Gel",
+    brand: "ClearFace",
+    price: "$22",
   },
   {
-    name: 'Night Repair Oil',
-    brand: 'SkinLab',
-    price: '$41',
+    name: "Night Repair Oil",
+    brand: "SkinLab",
+    price: "$41",
   },
 ];
 
 const brands = [
   {
-    name: 'GlowSkin',
-    description: 'Radiance-focused skincare for glow and hydration.',
+    name: "GlowSkin",
+    description: "Radiance-focused skincare for glow and hydration.",
   },
   {
-    name: 'Pure Beauty',
-    description: 'Clean formulas designed for bright and healthy skin.',
+    name: "Pure Beauty",
+    description: "Clean formulas designed for bright and healthy skin.",
   },
   {
-    name: 'ClearFace',
-    description: 'Targeted skincare for acne-prone and sensitive skin.',
+    name: "ClearFace",
+    description: "Targeted skincare for acne-prone and sensitive skin.",
   },
   {
-    name: 'SkinLab',
-    description: 'Advanced skincare solutions backed by smart beauty science.',
+    name: "SkinLab",
+    description: "Advanced skincare solutions backed by smart beauty science.",
   },
 ];
 
@@ -123,8 +123,8 @@ export default function HomePage() {
 
               <MotionFade delay={0.14}>
                 <p className="mx-auto mt-8 max-w-3xl text-lg leading-8 text-slate-600 sm:text-xl sm:leading-9 lg:mt-9">
-                  Get personalized skincare recommendations powered by advanced AI.
-                  Your journey to radiant skin starts here.
+                  Get personalized skincare recommendations powered by advanced
+                  AI. Your journey to radiant skin starts here.
                 </p>
               </MotionFade>
 
@@ -205,7 +205,8 @@ export default function HomePage() {
                 </h2>
 
                 <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-slate-500 sm:text-lg sm:leading-8">
-                  Upload your photo and get instant personalized insights about your skin.
+                  Upload your photo and get instant personalized insights about
+                  your skin.
                 </p>
 
                 <div className="mt-10">
@@ -247,7 +248,9 @@ export default function HomePage() {
                       {product.name}
                     </h3>
 
-                    <p className="mt-1 text-sm text-slate-500">{product.brand}</p>
+                    <p className="mt-1 text-sm text-slate-500">
+                      {product.brand}
+                    </p>
 
                     <p className="mt-3 text-lg font-bold text-slate-800">
                       {product.price}

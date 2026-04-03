@@ -1,12 +1,12 @@
 type ContainerProps = {
-    children: React.ReactNode;
-    className?: string;
+  children: React.ReactNode;
+  className?: string;
 };
 
-export function Container({ children, className = '' }: ContainerProps) {
-    return (
-        <div
-            className={`
+export function Container({ children, className = "" }: ContainerProps) {
+  return (
+    <div
+      className={`
                 mx-auto
                 w-full
                 max-w-[1200px]
@@ -15,8 +15,8 @@ export function Container({ children, className = '' }: ContainerProps) {
                 lg:px-8
                 ${className}
             `}
-        >
-            {children}
-        </div>
-    );
+    >
+      {children}
+    </div>
+  );
 }

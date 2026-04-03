@@ -1,62 +1,29 @@
 import { ProductCard } from './ProductCard';
+import type { ProductItem } from '@/lib/product-data';
 
-const products = [
-    {
-        name: 'Hydrating Serum',
-        brand: 'GlowLab',
-        type: 'Serum',
-        price: '$45.00',
-        rating: '★ 4.8',
-        image: '/images/products/product-1.jpg',
-    },
-    {
-        name: 'Brightening Cream',
-        brand: 'Radiance Co',
-        type: 'Cream',
-        price: '$52.00',
-        rating: '★ 4.9',
-        image: '/images/products/product-2.jpg',
-    },
-    {
-        name: 'Gentle Cleanser',
-        brand: 'Pure Beauty',
-        type: 'Cleanser',
-        price: '$28.00',
-        rating: '★ 4.7',
-        image: '/images/products/product-3.jpg',
-    },
-    {
-        name: 'Vitamin C Serum',
-        brand: 'Youth Labs',
-        type: 'Serum',
-        price: '$48.00',
-        rating: '★ 4.8',
-        image: '/images/products/product-4.jpg',
-    },
-    {
-        name: 'Night Moisture',
-        brand: 'Sun Shield',
-        type: 'Moisturizer',
-        price: '$39.00',
-        rating: '★ 4.6',
-        image: '/images/products/product-5.jpg',
-    },
-    {
-        name: 'Barrier Repair',
-        brand: 'Derma Care',
-        type: 'Treatment',
-        price: '$56.00',
-        rating: '★ 4.9',
-        image: '/images/products/product-6.jpg',
-    },
-];
+type ProductGridProps = {
+  products: ProductItem[];
+};
 
-export function ProductGrid() {
+export function ProductGrid({ products }: ProductGridProps) {
+  if (!products.length) {
     return (
-        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-            {products.map((product) => (
-                <ProductCard key={`${product.name}-${product.brand}`} product={product} />
-            ))}
-        </div>
+      <div className="rounded-[1.25rem] border border-[#eadff0] bg-white p-10 text-center shadow-[0_8px_24px_rgba(15,23,42,0.04)]">
+        <h3 className="text-lg font-semibold text-slate-800">
+          No products found
+        </h3>
+        <p className="mt-2 text-sm text-slate-500">
+          Try another search or filter.
+        </p>
+      </div>
     );
+  }
+
+  return (
+    <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+      {products.map((product) => (
+        <ProductCard key={product.id} product={product} />
+      ))}
+    </div>
+  );
 }
