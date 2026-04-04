@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { getChatSessions, type ChatSessionSummary } from '@/lib/chat-api';
+import { getChatSessions, type ChatSession } from '@/lib/chat-api';
 
 export function ChatHistoryCard() {
-  const [sessions, setSessions] = useState<ChatSessionSummary[]>([]);
+  const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
