@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
 
-import { fadeUp } from "@/lib/motion";
+import { fadeUp } from '@/lib/motion';
 
 type MotionFadeProps = {
   children: React.ReactNode;
@@ -23,7 +23,7 @@ export function MotionFade({
       animate="visible"
       transition={{
         duration: 0.55,
-        ease: "easeOut",
+        ease: [0.25, 0.1, 0.25, 1],
         delay,
       }}
     >
