@@ -8,6 +8,8 @@ import { UploadModule } from './upload/upload.module';
 import { UsersModule } from './users/users.module';
 import { SkinTestModule } from './skin-test/skin-test.module';
 import { ChatbotModule } from './chatbot/chatbot.module';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -23,5 +25,7 @@ import { ChatbotModule } from './chatbot/chatbot.module';
     SkinTestModule,
     ChatbotModule,
   ],
+  controllers: [AppController],
+  providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
