@@ -1,17 +1,33 @@
-import { Footer } from "@/components/layout/footer/Footer";
-import { Navbar } from "@/components/layout/navbar/Navbar";
-import { Container } from "@/components/layout/container/Container";
-import { MotionFade } from "@/components/ui/MotionFade";
-import { BrandDetailsCard } from "@/components/brands/BrandDetailsCard";
-import { BrandProducts } from "@/components/brands/BrandProducts";
+import { notFound } from 'next/navigation';
 
-export default function BrandDetailsPage() {
-  const brand = {
-    name: "GlowLab",
-    description:
-      "GlowLab creates modern skincare products focused on hydration, radiance, and soft healthy skin with elegant daily formulas.",
-    focus: "Hydration, glow, and everyday skin wellness",
+import { Footer } from '@/components/layout/footer/Footer';
+import { Navbar } from '@/components/layout/navbar/Navbar';
+import { Container } from '@/components/layout/container/Container';
+import { MotionFade } from '@/components/ui/MotionFade';
+import { BrandDetailsCard } from '@/components/brands/BrandDetailsCard';
+import { BrandProducts } from '@/components/brands/BrandProducts';
+import { getBrandBySlug } from '@/lib/brands-api';
+
+type BrandDetailsPageProps = {
+  params: {
+    id: string;
   };
+};
+
+export default async function BrandDetailsPage({
+  params,
+}: BrandDetailsPageProps) {
+  let brand = null;
+
+  try {
+    brand = await getBrandBySlug(params.id);
+  } catch {
+    brand = null;
+  }
+
+  if (!brand) {
+    notFound();
+  }
 
   return (
     <div className="min-h-screen text-slate-800">
@@ -46,7 +62,7 @@ export default function BrandDetailsPage() {
           <MotionFade delay={0.24}>
             <div className="mx-auto mt-12 grid max-w-5xl gap-6 lg:grid-cols-2">
               <BrandDetailsCard brand={brand} />
-              <BrandProducts />
+              <BrandProducts products={brand.products} />
             </div>
           </MotionFade>
         </Container>

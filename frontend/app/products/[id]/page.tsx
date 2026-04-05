@@ -6,7 +6,7 @@ import { Container } from '@/components/layout/container/Container';
 import { MotionFade } from '@/components/ui/MotionFade';
 import { ProductDetailsCard } from '@/components/products/ProductDetailsCard';
 import { ProductInfo } from '@/components/products/ProductInfo';
-import { products } from '@/lib/product-data';
+import { getProductBySlug } from '@/lib/products-api';
 
 type ProductDetailsPageProps = {
   params: {
@@ -14,10 +14,16 @@ type ProductDetailsPageProps = {
   };
 };
 
-export default function ProductDetailsPage({
+export default async function ProductDetailsPage({
   params,
 }: ProductDetailsPageProps) {
-  const product = products.find((item) => item.id === params.id);
+  let product = null;
+
+  try {
+    product = await getProductBySlug(params.id);
+  } catch {
+    product = null;
+  }
 
   if (!product) {
     notFound();

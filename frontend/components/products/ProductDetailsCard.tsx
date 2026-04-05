@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import type { ProductItem } from '@/lib/product-data';
+import type { ProductItem } from '@/lib/products-api';
 
 export function ProductDetailsCard({ product }: { product: ProductItem }) {
   const [imageError, setImageError] = useState(false);

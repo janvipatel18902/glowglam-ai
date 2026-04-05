@@ -1,10 +1,15 @@
-import { Footer } from "@/components/layout/footer/Footer";
-import { Navbar } from "@/components/layout/navbar/Navbar";
-import { Container } from "@/components/layout/container/Container";
-import { MotionFade } from "@/components/ui/MotionFade";
-import { BrandGrid } from "@/components/brands/BrandGrid";
+import Link from 'next/link';
 
-export default function BrandsPage() {
+import { Footer } from '@/components/layout/footer/Footer';
+import { Navbar } from '@/components/layout/navbar/Navbar';
+import { Container } from '@/components/layout/container/Container';
+import { MotionFade } from '@/components/ui/MotionFade';
+import { BrandGrid } from '@/components/brands/BrandGrid';
+import { getBrands } from '@/lib/brands-api';
+
+export default async function BrandsPage() {
+  const brands = await getBrands();
+
   return (
     <div className="min-h-screen text-slate-800">
       <Navbar />
@@ -29,14 +34,15 @@ export default function BrandsPage() {
 
             <MotionFade delay={0.16}>
               <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-slate-500 sm:text-base">
-                Partnered with the world&apos;s leading skincare brands.
+                Explore premium skincare brands and the products available from
+                each collection.
               </p>
             </MotionFade>
           </div>
 
           <MotionFade delay={0.24}>
             <div className="mx-auto mt-12 max-w-6xl rounded-[1.25rem] border border-[#eadff0] bg-white/75 p-5 shadow-[0_8px_24px_rgba(15,23,42,0.04)] backdrop-blur sm:p-6">
-              <BrandGrid />
+              <BrandGrid brands={brands} />
             </div>
           </MotionFade>
 
@@ -49,9 +55,12 @@ export default function BrandsPage() {
                 Join our growing network of premium skincare brands.
               </p>
 
-              <button className="mt-6 rounded-full bg-gradient-to-r from-pink-500 to-violet-500 px-6 py-3 text-sm font-semibold text-white transition hover:opacity-95">
+              <Link
+                href="/contact"
+                className="mt-6 inline-flex rounded-full bg-gradient-to-r from-pink-500 to-violet-500 px-6 py-3 text-sm font-semibold text-white transition hover:opacity-95"
+              >
                 Contact Us
-              </button>
+              </Link>
             </div>
           </MotionFade>
         </Container>

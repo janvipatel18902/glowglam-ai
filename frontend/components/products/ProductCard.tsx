@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import type { ProductItem } from '@/lib/product-data';
+import type { ProductItem } from '@/lib/products-api';
 
 export function ProductCard({ product }: { product: ProductItem }) {
   const [imageError, setImageError] = useState(false);
@@ -55,7 +55,7 @@ export function ProductCard({ product }: { product: ProductItem }) {
           </span>
 
           <Link
-            href={`/products/${product.id}`}
+            href={`/products/${product.slug}`}
             className="rounded-full bg-gradient-to-r from-pink-500 to-violet-500 px-4 py-2 text-xs font-semibold text-white transition hover:opacity-95 sm:text-sm"
           >
             View Product

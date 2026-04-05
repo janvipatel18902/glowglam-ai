@@ -1,19 +1,28 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { Footer } from '@/components/layout/footer/Footer';
 import { Navbar } from '@/components/layout/navbar/Navbar';
 import { Container } from '@/components/layout/container/Container';
 import { MotionFade } from '@/components/ui/MotionFade';
 import { ProductGrid } from '@/components/products/ProductGrid';
-import { products as allProducts } from '@/lib/product-data';
+import { getProducts, type ProductItem } from '@/lib/products-api';
 
-type FilterType = 'All' | 'Serum' | 'Cream' | 'Cleanser' | 'Moisturizer' | 'Treatment';
+type FilterType =
+  | 'All'
+  | 'Serum'
+  | 'Cream'
+  | 'Cleanser'
+  | 'Moisturizer'
+  | 'Treatment';
 
 export default function ProductsPage() {
   const [search, setSearch] = useState('');
   const [activeFilter, setActiveFilter] = useState<FilterType>('All');
+  const [products, setProducts] = useState<ProductItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   const filters: FilterType[] = [
     'All',
@@ -24,8 +33,42 @@ export default function ProductsPage() {
     'Treatment',
   ];
 
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadProducts() {
+      try {
+        setLoading(true);
+        setError('');
+        const data = await getProducts();
+
+        if (mounted) {
+          setProducts(data);
+        }
+      } catch (err) {
+        if (mounted) {
+          setError(
+            err instanceof Error
+              ? err.message
+              : 'Failed to load products',
+          );
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadProducts();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   const filteredProducts = useMemo(() => {
-    return allProducts.filter((product) => {
+    return products.filter((product) => {
       const matchesFilter =
         activeFilter === 'All' ? true : product.type === activeFilter;
 
@@ -39,7 +82,7 @@ export default function ProductsPage() {
 
       return matchesFilter && matchesSearch;
     });
-  }, [search, activeFilter]);
+  }, [products, search, activeFilter]);
 
   return (
     <div className="min-h-screen text-slate-800">
@@ -80,7 +123,22 @@ export default function ProductsPage() {
           </MotionFade>
 
           <MotionFade delay={0.08}>
-            <ProductGrid products={filteredProducts} />
+            {loading ? (
+              <div className="rounded-[1.25rem] border border-[#eadff0] bg-white p-10 text-center shadow-[0_8px_24px_rgba(15,23,42,0.04)]">
+                <h3 className="text-lg font-semibold text-slate-800">
+                  Loading products...
+                </h3>
+              </div>
+            ) : error ? (
+              <div className="rounded-[1.25rem] border border-red-200 bg-white p-10 text-center shadow-[0_8px_24px_rgba(15,23,42,0.04)]">
+                <h3 className="text-lg font-semibold text-red-600">
+                  Failed to load products
+                </h3>
+                <p className="mt-2 text-sm text-slate-500">{error}</p>
+              </div>
+            ) : (
+              <ProductGrid products={filteredProducts} />
+            )}
           </MotionFade>
         </Container>
       </main>

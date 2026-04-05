@@ -1,5 +1,5 @@
 import { ProductCard } from './ProductCard';
-import type { ProductItem } from '@/lib/product-data';
+import type { ProductItem } from '@/lib/products-api';
 
 type ProductGridProps = {
   products: ProductItem[];

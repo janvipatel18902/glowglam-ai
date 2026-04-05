@@ -1,4 +1,4 @@
-import type { ProductItem } from '@/lib/product-data';
+import type { ProductItem } from '@/lib/products-api';
 
 export function ProductInfo({ product }: { product: ProductItem }) {
   const info = [

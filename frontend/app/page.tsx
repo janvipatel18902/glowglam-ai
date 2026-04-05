@@ -1,70 +1,32 @@
-import { Footer } from "@/components/layout/footer/Footer";
-import { Navbar } from "@/components/layout/navbar/Navbar";
-import { Container } from "@/components/layout/container/Container";
-import { Button } from "@/components/ui/Button";
-import { MotionFade } from "@/components/ui/MotionFade";
-import { MotionStagger } from "@/components/ui/MotionStagger";
+import Link from 'next/link';
+
+import { Footer } from '@/components/layout/footer/Footer';
+import { Navbar } from '@/components/layout/navbar/Navbar';
+import { Container } from '@/components/layout/container/Container';
+import { Button } from '@/components/ui/Button';
+import { MotionFade } from '@/components/ui/MotionFade';
+import { MotionStagger } from '@/components/ui/MotionStagger';
+import { getBrands } from '@/lib/brands-api';
+import { getProducts } from '@/lib/products-api';
 
 const aiFeatures = [
   {
-    title: "AI Skin Analysis",
+    title: 'AI Skin Analysis',
     description:
-      "Upload a selfie and receive personalized skincare insights powered by AI.",
-    icon: "✦",
+      'Upload a selfie and receive personalized skincare insights powered by AI.',
+    icon: '✦',
   },
   {
-    title: "Smart AI Chatbot",
+    title: 'Smart AI Chatbot',
     description:
-      "Ask skincare questions and get intelligent beauty guidance anytime.",
-    icon: "✧",
+      'Ask skincare questions and get intelligent beauty guidance anytime.',
+    icon: '✧',
   },
   {
-    title: "Personalized Routine",
+    title: 'Personalized Routine',
     description:
-      "Discover routines and product suggestions tailored to your skin needs.",
-    icon: "✩",
-  },
-];
-
-const products = [
-  {
-    name: "Hydrating Serum",
-    brand: "GlowSkin",
-    price: "$29",
-  },
-  {
-    name: "Vitamin C Cream",
-    brand: "Pure Beauty",
-    price: "$35",
-  },
-  {
-    name: "Acne Repair Gel",
-    brand: "ClearFace",
-    price: "$22",
-  },
-  {
-    name: "Night Repair Oil",
-    brand: "SkinLab",
-    price: "$41",
-  },
-];
-
-const brands = [
-  {
-    name: "GlowSkin",
-    description: "Radiance-focused skincare for glow and hydration.",
-  },
-  {
-    name: "Pure Beauty",
-    description: "Clean formulas designed for bright and healthy skin.",
-  },
-  {
-    name: "ClearFace",
-    description: "Targeted skincare for acne-prone and sensitive skin.",
-  },
-  {
-    name: "SkinLab",
-    description: "Advanced skincare solutions backed by smart beauty science.",
+      'Discover routines and product suggestions tailored to your skin needs.',
+    icon: '✩',
   },
 ];
 
@@ -88,7 +50,12 @@ function SectionHeading({
   );
 }
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [products, brands] = await Promise.all([getProducts(), getBrands()]);
+
+  const featuredProducts = products.slice(0, 4);
+  const featuredBrands = brands.slice(0, 4);
+
   return (
     <div className="min-h-screen text-slate-800">
       <Navbar />
@@ -232,17 +199,31 @@ export default function HomePage() {
                   Popular Products
                 </span>
               }
-              description="Recommended by AI for your skin goals and daily routine."
+              description="Explore trending skincare picks from our curated collection."
             />
 
             <MotionStagger className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {products.map((product) => (
+              {featuredProducts.map((product) => (
                 <MotionFade
-                  key={product.name}
+                  key={product.id}
                   className="h-full rounded-[1.75rem] border border-white/70 bg-white/85 p-5 shadow-[0_18px_38px_rgba(15,23,42,0.08)] transition duration-300 hover:-translate-y-1"
                 >
                   <div className="flex h-full flex-col">
-                    <div className="h-44 rounded-2xl bg-gradient-to-br from-pink-200 via-fuchsia-100 to-blue-200" />
+                    <div className="overflow-hidden rounded-2xl bg-[#f7f2f7]">
+                      {product.image ? (
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="h-44 w-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-44 items-center justify-center bg-gradient-to-br from-pink-200 via-fuchsia-100 to-blue-200">
+                          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-500 to-violet-500 text-2xl font-bold text-white shadow-lg">
+                            {product.name.charAt(0)}
+                          </div>
+                        </div>
+                      )}
+                    </div>
 
                     <h3 className="mt-5 text-lg font-semibold text-slate-800">
                       {product.name}
@@ -256,12 +237,12 @@ export default function HomePage() {
                       {product.price}
                     </p>
 
-                    <button
-                      type="button"
-                      className="mt-4 w-full rounded-full bg-gradient-to-r from-pink-500 via-fuchsia-500 to-blue-500 px-4 py-3 text-sm font-semibold text-white shadow-[0_10px_25px_rgba(168,85,247,0.20)] transition hover:opacity-95"
+                    <Link
+                      href={`/products/${product.slug}`}
+                      className="mt-4 inline-flex w-full justify-center rounded-full bg-gradient-to-r from-pink-500 via-fuchsia-500 to-blue-500 px-4 py-3 text-sm font-semibold text-white shadow-[0_10px_25px_rgba(168,85,247,0.20)] transition hover:opacity-95"
                     >
-                      View
-                    </button>
+                      View Product
+                    </Link>
                   </div>
                 </MotionFade>
               ))}
@@ -283,9 +264,9 @@ export default function HomePage() {
             />
 
             <MotionStagger className="mt-12 grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-              {brands.map((brand) => (
+              {featuredBrands.map((brand) => (
                 <MotionFade
-                  key={brand.name}
+                  key={brand.id}
                   className="h-full rounded-[1.75rem] border border-white/70 bg-white/85 p-6 text-center shadow-[0_18px_38px_rgba(15,23,42,0.08)] transition duration-300 hover:-translate-y-1"
                 >
                   <div className="flex h-full flex-col">
@@ -301,12 +282,17 @@ export default function HomePage() {
                       {brand.description}
                     </p>
 
-                    <button
-                      type="button"
-                      className="mt-5 rounded-full border border-fuchsia-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-fuchsia-50"
+                    <p className="mt-3 text-xs font-medium text-fuchsia-600">
+                      {brand.productsCount} product
+                      {brand.productsCount === 1 ? '' : 's'}
+                    </p>
+
+                    <Link
+                      href={`/brands/${brand.slug}`}
+                      className="mt-5 inline-flex justify-center rounded-full border border-fuchsia-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-fuchsia-50"
                     >
                       Explore Brand
-                    </button>
+                    </Link>
                   </div>
                 </MotionFade>
               ))}

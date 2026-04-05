@@ -1,10 +1,7 @@
-type Brand = {
-  name: string;
-  description: string;
-  focus: string;
-};
+import Link from 'next/link';
+import type { BrandDetails } from '@/lib/brands-api';
 
-export function BrandDetailsCard({ brand }: { brand: Brand }) {
+export function BrandDetailsCard({ brand }: { brand: BrandDetails }) {
   return (
     <div className="rounded-[1.25rem] border border-[#eadff0] bg-white p-5 shadow-[0_8px_24px_rgba(15,23,42,0.05)] sm:p-6">
       <div className="flex h-14 w-14 items-center justify-center rounded-[1rem] bg-gradient-to-br from-pink-500 to-violet-500 text-2xl font-bold text-white shadow-md">
@@ -24,16 +21,20 @@ export function BrandDetailsCard({ brand }: { brand: Brand }) {
           Brand Focus
         </p>
         <p className="mt-2 text-sm font-semibold text-slate-700">
-          {brand.focus}
+          Premium skincare solutions designed to support healthy-looking skin.
         </p>
       </div>
 
-      <button
-        type="button"
-        className="mt-5 rounded-full bg-gradient-to-r from-pink-500 to-violet-500 px-5 py-3 text-sm font-semibold text-white transition hover:opacity-95"
+      <p className="mt-4 text-sm font-medium text-fuchsia-600">
+        {brand.productsCount} product{brand.productsCount === 1 ? '' : 's'} available
+      </p>
+
+      <Link
+        href="/products"
+        className="mt-5 inline-flex rounded-full bg-gradient-to-r from-pink-500 to-violet-500 px-5 py-3 text-sm font-semibold text-white transition hover:opacity-95"
       >
         Explore Products
-      </button>
+      </Link>
     </div>
   );
 }
