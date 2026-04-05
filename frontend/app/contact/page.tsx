@@ -5,6 +5,7 @@ import { Footer } from '@/components/layout/footer/Footer';
 import { Navbar } from '@/components/layout/navbar/Navbar';
 import { Container } from '@/components/layout/container/Container';
 import { MotionFade } from '@/components/ui/MotionFade';
+import { createContactSubmission } from '@/lib/contact-api';
 
 export default function ContactPage() {
     const [form, setForm] = useState({
@@ -13,6 +14,8 @@ export default function ContactPage() {
         message: '',
     });
     const [submitted, setSubmitted] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+    const [error, setError] = useState('');
 
     function handleChange(
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -23,14 +26,26 @@ export default function ContactPage() {
         }));
     }
 
-    function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        setSubmitted(true);
-        setForm({
-            fullName: '',
-            email: '',
-            message: '',
-        });
+        setSubmitting(true);
+        setSubmitted(false);
+        setError('');
+
+        try {
+            await createContactSubmission(form);
+
+            setSubmitted(true);
+            setForm({
+                fullName: '',
+                email: '',
+                message: '',
+            });
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Failed to send message');
+        } finally {
+            setSubmitting(false);
+        }
     }
 
     return (
@@ -50,7 +65,7 @@ export default function ContactPage() {
                         <MotionFade delay={0.08}>
                             <h1 className="mt-6 text-4xl font-bold sm:text-5xl">
                                 <span className="bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600 bg-clip-text text-transparent">
-                                    Let’s Connect
+                                    Let&apos;s Connect
                                 </span>
                             </h1>
                         </MotionFade>
@@ -66,13 +81,22 @@ export default function ContactPage() {
                     <MotionFade delay={0.24}>
                         <div className="mx-auto mt-12 max-w-2xl rounded-[1.5rem] border border-[#eadff0] bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.05)] sm:p-8">
                             {submitted ? (
-                                <div className="rounded-[1rem] border border-green-200 bg-green-50 p-4 text-center">
+                                <div className="mb-5 rounded-[1rem] border border-green-200 bg-green-50 p-4 text-center">
                                     <h3 className="text-lg font-semibold text-green-700">
                                         Message sent successfully
                                     </h3>
                                     <p className="mt-2 text-sm text-green-700/80">
-                                        Thanks for reaching out. We’ll get back to you soon.
+                                        Thanks for reaching out. We&apos;ll get back to you soon.
                                     </p>
+                                </div>
+                            ) : null}
+
+                            {error ? (
+                                <div className="mb-5 rounded-[1rem] border border-red-200 bg-red-50 p-4 text-center">
+                                    <h3 className="text-lg font-semibold text-red-700">
+                                        Failed to send message
+                                    </h3>
+                                    <p className="mt-2 text-sm text-red-700/80">{error}</p>
                                 </div>
                             ) : null}
 
@@ -123,9 +147,10 @@ export default function ContactPage() {
 
                                 <button
                                     type="submit"
-                                    className="w-full rounded-full bg-gradient-to-r from-pink-500 to-violet-500 px-6 py-3 text-sm font-semibold text-white transition hover:opacity-95"
+                                    disabled={submitting}
+                                    className="w-full rounded-full bg-gradient-to-r from-pink-500 to-violet-500 px-6 py-3 text-sm font-semibold text-white transition hover:opacity-95 disabled:opacity-70"
                                 >
-                                    Send Message
+                                    {submitting ? 'Sending...' : 'Send Message'}
                                 </button>
                             </form>
                         </div>

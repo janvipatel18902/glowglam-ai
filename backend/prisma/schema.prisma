@@ -129,3 +129,11 @@ model ChatMessage {
 
   chatSession ChatSession @relation(fields: [chatSessionId], references: [id], onDelete: Cascade)
 }
+
+model ContactSubmission {
+  id        String   @id @default(cuid())
+  fullName  String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+}
