@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { OllamaMessage, OllamaService } from './ollama.service';
+import { GroqMessage, GroqService } from './groq.service';
 
 type ChatRole = 'user' | 'assistant';
 
@@ -19,12 +19,12 @@ type SkinContext = {
 
 @Injectable()
 export class ChatbotService {
-  private static readonly MAX_HISTORY_MESSAGES = 2;
+  private static readonly MAX_HISTORY_MESSAGES = 6;
   private static readonly MAX_MESSAGE_LENGTH = 250;
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly ollamaService: OllamaService,
+    private readonly groqService: GroqService,
   ) {}
 
   async createSession(userId: string) {
@@ -123,7 +123,6 @@ export class ChatbotService {
   async sendMessage(sessionId: string, userId: string, content: string) {
     const session = await this.ensureSessionAccess(sessionId, userId);
     const trimmedContent = this.validateMessage(content);
-
     const normalizedUserMessage = this.normalizeMessage(trimmedContent);
 
     const userMessage = await this.prisma.chatMessage.create({
@@ -137,7 +136,7 @@ export class ChatbotService {
     const historyForModel = await this.getHistoryForModel(session.id);
     const skinContext = await this.getLatestSkinContext(userId);
 
-    const aiReply = await this.ollamaService.chat([
+    const aiReply = await this.groqService.chat([
       this.buildSystemPrompt(skinContext),
       ...historyForModel,
       {
@@ -150,7 +149,7 @@ export class ChatbotService {
       data: {
         chatSessionId: session.id,
         role: 'assistant',
-        content: aiReply,
+        content: aiReply || 'Sorry, I could not generate a response right now.',
       },
     });
 
@@ -183,7 +182,6 @@ export class ChatbotService {
   ) {
     const session = await this.ensureSessionAccess(sessionId, userId);
     const trimmedContent = this.validateMessage(content);
-
     const normalizedUserMessage = this.normalizeMessage(trimmedContent);
 
     await this.prisma.chatMessage.create({
@@ -197,17 +195,18 @@ export class ChatbotService {
     const historyForModel = await this.getHistoryForModel(session.id);
     const skinContext = await this.getLatestSkinContext(userId);
 
-    const fullResponse = await this.ollamaService.chatStream(
-      [
-        this.buildSystemPrompt(skinContext),
-        ...historyForModel,
-        {
-          role: 'user',
-          content: normalizedUserMessage,
-        },
-      ],
-      onChunk,
-    );
+    const fullResponse = await this.groqService.chat([
+      this.buildSystemPrompt(skinContext),
+      ...historyForModel,
+      {
+        role: 'user',
+        content: normalizedUserMessage,
+      },
+    ]);
+
+    if (fullResponse) {
+      onChunk(fullResponse);
+    }
 
     await this.prisma.chatMessage.create({
       data: {
@@ -310,7 +309,7 @@ export class ChatbotService {
       skinType: result?.skincare?.skinType ?? null,
       sensitivity: result?.skincare?.sensitivity ?? null,
       concerns: Array.isArray(result?.skincare?.concerns)
-        ? result!.skincare!.concerns!
+        ? (result.skincare?.concerns ?? [])
         : [],
       recommendations: latestSkinTest.recommendations.map((item) => ({
         title: item.title,
@@ -319,7 +318,7 @@ export class ChatbotService {
     };
   }
 
-  private buildSystemPrompt(skinContext: SkinContext | null): OllamaMessage {
+  private buildSystemPrompt(skinContext: SkinContext | null): GroqMessage {
     const skinContextBlock = skinContext
       ? `
 User skin test context:
@@ -358,7 +357,7 @@ Rules:
 - Do not diagnose medical conditions
 - Do not claim certainty from the skin test
 - Suggest patch testing for strong actives
-- If severe irritation, pain, infection, or swelling is mentioned, suggest a dermatologist
+- If severe irritation, pain, infection, or swelling is mentioned, suggest seeing a dermatologist
 
 Use these hints only when relevant:
 - acne: salicylic acid, niacinamide, gentle cleanser, moisturizer, sunscreen
