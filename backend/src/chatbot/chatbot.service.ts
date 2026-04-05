@@ -25,7 +25,7 @@ export class ChatbotService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly groqService: GroqService,
-  ) {}
+  ) { }
 
   async createSession(userId: string) {
     const session = await this.prisma.chatSession.create({
@@ -250,7 +250,9 @@ export class ChatbotService {
     return trimmedContent;
   }
 
-  private async getHistoryForModel(sessionId: string): Promise<
+  private async getHistoryForModel(
+    sessionId: string,
+  ): Promise<
     {
       role: ChatRole;
       content: string;
@@ -294,13 +296,13 @@ export class ChatbotService {
 
     const result = latestSkinTest.resultJson as
       | {
-          skincare?: {
-            skinType?: string;
-            sensitivity?: string;
-            concerns?: string[];
-            confidence?: number;
-          };
-        }
+        skincare?: {
+          skinType?: string;
+          sensitivity?: string;
+          concerns?: string[];
+          confidence?: number;
+        };
+      }
       | null
       | undefined;
 
@@ -321,58 +323,66 @@ export class ChatbotService {
   private buildSystemPrompt(skinContext: SkinContext | null): GroqMessage {
     const skinContextBlock = skinContext
       ? `
-User skin test context:
-- summary: ${skinContext.summary ?? 'Not available'}
-- skin type: ${skinContext.skinType ?? 'Not available'}
-- sensitivity: ${skinContext.sensitivity ?? 'Not available'}
-- concerns: ${
-          skinContext.concerns.length > 0
-            ? skinContext.concerns.join(', ')
-            : 'Not available'
-        }
-- recommended focus: ${
-          skinContext.recommendations.length > 0
-            ? skinContext.recommendations.map((item) => item.title).join(', ')
-            : 'Not available'
-        }
+User skin profile:
+- Skin type: ${skinContext.skinType ?? 'unknown'}
+- Sensitivity: ${skinContext.sensitivity ?? 'unknown'}
+- Concerns: ${skinContext.concerns.length > 0
+        ? skinContext.concerns.join(', ')
+        : 'none'
+      }
+- Summary: ${skinContext.summary ?? 'not available'}
+- Recommended focus: ${skinContext.recommendations.length > 0
+        ? skinContext.recommendations.map((item) => item.title).join(', ')
+        : 'none'
+      }
 
-Use this skin test context when relevant.
+Use this context naturally when relevant.
 `
       : `
-No completed skin test is available yet.
-If useful, encourage the user to take a skin test for more personalized advice.
+No skin test available yet.
+If helpful, suggest taking a skin test for personalization.
 `;
 
     return {
       role: 'system',
       content: `
-You are GlowGlam AI, a skincare assistant.
+You are GlowGlam AI, a friendly and knowledgeable skincare assistant.
 
 ${skinContextBlock}
 
-Rules:
-- Be short, clear, and practical
-- Personalize the answer using the user's skin test when relevant
-- Do not repeat yourself
+Guidelines:
+- Speak in a warm, natural, conversational tone
+- Do NOT use numbered lists unless explicitly asked
+- Keep responses under 80 words
+- Be helpful but not overly technical
+- Give 1 or 2 practical suggestions naturally in the sentence
+- Add a small tip or caution if relevant
+- Personalize using skin context when possible
+- Avoid repeating yourself
 - Do not diagnose medical conditions
 - Do not claim certainty from the skin test
-- Suggest patch testing for strong actives
-- If severe irritation, pain, infection, or swelling is mentioned, suggest seeing a dermatologist
+- Suggest patch testing for strong actives when relevant
+- Suggest dermatologist help only for serious issues like severe irritation, pain, infection, or swelling
 
-Use these hints only when relevant:
+Style examples:
+- "You can use vitamin C in the morning since it helps protect your skin from damage."
+- "Since your skin is oily, a lightweight moisturizer would work better."
+- "If your skin feels sensitive, start slowly and patch test first."
+
+Avoid robotic responses like:
+- "1. Answer 2. Step 3. Tip"
+
+Focus hints (use only if relevant):
 - acne: salicylic acid, niacinamide, gentle cleanser, moisturizer, sunscreen
 - dull skin: vitamin C, hydration, sunscreen
-- dry skin: ceramides, hyaluronic acid, moisturizer
+- dry skin: hyaluronic acid, ceramides, moisturizer
 - oily skin: lightweight non-comedogenic products
 - sensitive skin: gentle fragrance-free routine
-- retinol: night use, start slowly, moisturize, sunscreen next day
+- retinol: night use, start slowly, moisturize, sunscreen the next day
 
-Response format:
-1. Short answer
-2. Simple next step
-3. Important tip
+End naturally. If useful, ask one short follow-up question.
 
-Keep the response under 100 words.
+Keep it simple, practical, and human-like.
       `.trim(),
     };
   }
@@ -382,7 +392,9 @@ Keep the response under 100 words.
     currentTitle: string | null,
     userMessage: string,
   ) {
-    if (currentTitle && currentTitle !== 'New Chat') return;
+    if (currentTitle && currentTitle !== 'New Chat') {
+      return;
+    }
 
     const nextTitle =
       userMessage.length > 40 ? `${userMessage.slice(0, 40)}...` : userMessage;
