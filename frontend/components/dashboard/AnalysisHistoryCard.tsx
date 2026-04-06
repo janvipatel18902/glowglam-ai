@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { getMySkinTests } from '@/lib/skin-test-api';
+import { deleteSkinTest, getMySkinTests } from '@/lib/skin-test-api';
 
 type SkinTestItem = {
   id: string;
@@ -26,6 +26,7 @@ export function AnalysisHistoryCard() {
   const [analyses, setAnalyses] = useState<SkinTestItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [deletingId, setDeletingId] = useState('');
 
   useEffect(() => {
     async function fetchAnalyses() {
@@ -49,6 +50,33 @@ export function AnalysisHistoryCard() {
 
     fetchAnalyses();
   }, []);
+
+  async function handleDelete(id: string) {
+    const token = localStorage.getItem('accessToken');
+
+    if (!token) {
+      setError('Please login first.');
+      return;
+    }
+
+    const confirmed = window.confirm(
+      'Are you sure you want to delete this skin test?',
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setDeletingId(id);
+      await deleteSkinTest(id, token);
+      setAnalyses((prev) => prev.filter((item) => item.id !== id));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete scan');
+    } finally {
+      setDeletingId('');
+    }
+  }
 
   return (
     <div className="rounded-[2rem] border border-[#eadff0] bg-white p-6 shadow-[0_18px_45px_rgba(15,23,42,0.06)]">
@@ -79,10 +107,9 @@ export function AnalysisHistoryCard() {
       ) : (
         <div className="mt-6 space-y-4">
           {analyses.map((analysis) => (
-            <Link
+            <div
               key={analysis.id}
-              href={`/skin-test/${analysis.id}`}
-              className="block rounded-2xl border border-[#eee6f1] bg-[#fcfbfd] p-4 transition duration-300 hover:-translate-y-1 hover:shadow-[0_12px_30px_rgba(236,72,153,0.08)]"
+              className="rounded-2xl border border-[#eee6f1] bg-[#fcfbfd] p-4 transition duration-300 hover:-translate-y-1 hover:shadow-[0_12px_30px_rgba(236,72,153,0.08)]"
             >
               <div className="flex gap-4">
                 {analysis.images?.[0]?.imageUrl ? (
@@ -134,9 +161,27 @@ export function AnalysisHistoryCard() {
                       </span>
                     ))}
                   </div>
+
+                  <div className="mt-4 flex flex-wrap gap-3">
+                    <Link
+                      href={`/skin-test/${analysis.id}`}
+                      className="rounded-full border border-[#eadff0] bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-[#faf7fb]"
+                    >
+                      View Details
+                    </Link>
+
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(analysis.id)}
+                      disabled={deletingId === analysis.id}
+                      className="rounded-full border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-100 disabled:opacity-60"
+                    >
+                      {deletingId === analysis.id ? 'Deleting...' : 'Delete'}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       )}

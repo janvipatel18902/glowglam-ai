@@ -11,7 +11,7 @@ export class SkinTestService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly skinTestAnalysisService: SkinTestAnalysisService,
-  ) {}
+  ) { }
 
   create(userId: string, imageUrl: string) {
     return this.prisma.skinTest.create({
@@ -114,6 +114,28 @@ export class SkinTestService {
     return {
       message: 'Skin test analyzed successfully',
       skinTest: updatedSkinTest,
+    };
+  }
+
+  async remove(id: string, userId: string) {
+    const skinTest = await this.prisma.skinTest.findUnique({
+      where: { id },
+    });
+
+    if (!skinTest) {
+      throw new NotFoundException('Skin test not found');
+    }
+
+    if (skinTest.userId !== userId) {
+      throw new ForbiddenException('You cannot delete this skin test');
+    }
+
+    await this.prisma.skinTest.delete({
+      where: { id },
+    });
+
+    return {
+      message: 'Skin test deleted successfully',
     };
   }
 }

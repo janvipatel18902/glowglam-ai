@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -12,7 +13,7 @@ import { SkinTestService } from './skin-test.service';
 
 @Controller('skin-tests')
 export class SkinTestController {
-  constructor(private readonly skinTestService: SkinTestService) {}
+  constructor(private readonly skinTestService: SkinTestService) { }
 
   @UseGuards(JwtAuthGuard)
   @Post()
@@ -39,5 +40,11 @@ export class SkinTestController {
   @Post(':id/analyze')
   analyze(@Param('id') id: string, @Req() req: { user: { id: string } }) {
     return this.skinTestService.analyze(id, req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  remove(@Param('id') id: string, @Req() req: { user: { id: string } }) {
+    return this.skinTestService.remove(id, req.user.id);
   }
 }
