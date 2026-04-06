@@ -7,6 +7,11 @@ type SkinConcern = 'acne' | 'dryness' | 'dark_circles' | 'oiliness' | 'redness';
 type SkinType = 'dry' | 'oily' | 'combination' | 'normal';
 type Sensitivity = 'low' | 'medium' | 'high';
 
+type ClassificationItem = {
+  label: string;
+  score: number;
+};
+
 @Injectable()
 export class SkinTestAnalysisService {
   async analyzeImage(imageUrl: string) {
@@ -32,7 +37,6 @@ export class SkinTestAnalysisService {
       }
 
       const imageBuffer = fs.readFileSync(filePath);
-
       const extension = path.extname(filePath).toLowerCase();
 
       let mimeType = 'image/jpeg';
@@ -40,7 +44,6 @@ export class SkinTestAnalysisService {
       if (extension === '.webp') mimeType = 'image/webp';
 
       const imageBlob = new Blob([imageBuffer], { type: mimeType });
-
       const client = new InferenceClient(apiKey);
 
       const rawResult = await client.imageClassification({
@@ -48,15 +51,18 @@ export class SkinTestAnalysisService {
         data: imageBlob,
       });
 
-      const labels = Array.isArray(rawResult)
-        ? rawResult.map((item) => item.label.toLowerCase())
+      const normalized: ClassificationItem[] = Array.isArray(rawResult)
+        ? rawResult.map((item) => ({
+          label: String(item.label || '').toLowerCase(),
+          score: Number(item.score || 0),
+        }))
         : [];
 
-      const skincare = this.mapLabelsToSkincare(labels);
+      const skincare = this.mapLabelsToSkincare(normalized);
 
       return {
         resultJson: {
-          rawLabels: rawResult,
+          rawLabels: normalized,
           skincare,
         },
         summary: this.buildSummary(skincare),
@@ -68,79 +74,61 @@ export class SkinTestAnalysisService {
     }
   }
 
-  private mapLabelsToSkincare(labels: string[]) {
-    const joined = labels.join(' ');
+  private mapLabelsToSkincare(labels: ClassificationItem[]) {
+    const has = (keywords: string[]) =>
+      labels
+        .filter((item) =>
+          keywords.some((keyword) => item.label.includes(keyword)),
+        )
+        .reduce((sum, item) => sum + item.score, 0);
+
+    const dryScore = has(['dry', 'powder', 'ash', 'flake']);
+    const oilyScore = has(['oil', 'oily', 'shine', 'gloss']);
+    const acneScore = has(['acne', 'pimple', 'blemish', 'spot']);
+    const darkCircleScore = has(['dark circle', 'eye bag', 'under-eye']);
+    const rednessScore = has(['red', 'rash', 'irritation', 'inflamed']);
 
     let skinType: SkinType = 'normal';
-    let sensitivity: Sensitivity = 'medium';
+
+    if (dryScore >= 0.2 && oilyScore >= 0.2) {
+      skinType = 'combination';
+    } else if (oilyScore > dryScore && oilyScore >= 0.2) {
+      skinType = 'oily';
+    } else if (dryScore > oilyScore && dryScore >= 0.2) {
+      skinType = 'dry';
+    }
+
     const concerns: SkinConcern[] = [];
 
-    if (
-      joined.includes('shine') ||
-      joined.includes('gloss') ||
-      joined.includes('oil')
-    ) {
-      skinType = 'oily';
-      concerns.push('oiliness');
-    }
+    if (dryScore >= 0.18) concerns.push('dryness');
+    if (oilyScore >= 0.18) concerns.push('oiliness');
+    if (acneScore >= 0.15) concerns.push('acne');
+    if (darkCircleScore >= 0.12) concerns.push('dark_circles');
+    if (rednessScore >= 0.12) concerns.push('redness');
 
-    if (
-      joined.includes('powder') ||
-      joined.includes('dust') ||
-      joined.includes('dry')
-    ) {
-      skinType = 'dry';
-      concerns.push('dryness');
-    }
-
-    if (
-      joined.includes('face') ||
-      joined.includes('cheek') ||
-      joined.includes('nose') ||
-      joined.includes('skin') ||
-      joined.includes('lipstick') ||
-      joined.includes('mascara') ||
-      joined.includes('hair slide')
-    ) {
-      skinType = 'combination';
-    }
-
-    if (
-      joined.includes('spot') ||
-      joined.includes('pimple') ||
-      joined.includes('acne')
-    ) {
-      concerns.push('acne');
-    }
-
-    if (
-      joined.includes('dark') ||
-      joined.includes('shade') ||
-      joined.includes('eyeshadow')
-    ) {
-      concerns.push('dark_circles');
-    }
-
-    if (
-      joined.includes('red') ||
-      joined.includes('rash') ||
-      joined.includes('blush')
-    ) {
-      concerns.push('redness');
+    let sensitivity: Sensitivity = 'low';
+    if (rednessScore >= 0.2) {
       sensitivity = 'high';
+    } else if (rednessScore >= 0.1 || dryScore >= 0.22) {
+      sensitivity = 'medium';
     }
 
-    if (concerns.length === 0) {
-      concerns.push('dryness', 'dark_circles');
-    }
+    const evidenceScore = Math.max(
+      dryScore,
+      oilyScore,
+      acneScore,
+      darkCircleScore,
+      rednessScore,
+      0.15,
+    );
 
-    const uniqueConcerns = [...new Set(concerns)];
+    const confidence = Math.min(0.92, Math.max(0.3, evidenceScore));
 
     return {
       skinType,
       sensitivity,
-      concerns: uniqueConcerns,
-      confidence: 0.65,
+      concerns: [...new Set(concerns)],
+      confidence: Number(confidence.toFixed(2)),
     };
   }
 
@@ -150,11 +138,16 @@ export class SkinTestAnalysisService {
     concerns: SkinConcern[];
     confidence: number;
   }) {
-    const formattedConcerns = skincare.concerns
-      .map((item) => item.replace('_', ' '))
-      .join(', ');
+    const formattedConcerns =
+      skincare.concerns.length > 0
+        ? skincare.concerns.map((item) => item.replace('_', ' ')).join(', ')
+        : 'no strong concerns';
 
-    return `Your skin appears ${skincare.skinType} with ${skincare.sensitivity} sensitivity. Main concerns detected: ${formattedConcerns}.`;
+    if (skincare.confidence < 0.45) {
+      return `The analysis suggests ${skincare.skinType} skin with ${skincare.sensitivity} sensitivity, but confidence is limited. Possible concerns: ${formattedConcerns}.`;
+    }
+
+    return `The analysis suggests ${skincare.skinType} skin with ${skincare.sensitivity} sensitivity. Detected concerns: ${formattedConcerns}.`;
   }
 
   private buildRecommendations(skincare: {
@@ -166,33 +159,41 @@ export class SkinTestAnalysisService {
       {
         title: 'Gentle Cleanser',
         description:
-          'Use a gentle cleanser twice daily to remove buildup without over-drying your skin.',
+          'Use a gentle cleanser twice daily to remove buildup without stripping the skin barrier.',
       },
       {
-        title: 'Daily Moisturizer',
+        title: 'Daily Sunscreen',
         description:
-          'Apply a lightweight moisturizer every morning and night to support your skin barrier.',
-      },
-      {
-        title: 'Sunscreen',
-        description:
-          'Use broad-spectrum SPF 30+ every day to protect your skin from sun damage.',
+          'Apply broad-spectrum SPF 30+ every morning to protect your skin from UV damage.',
       },
     ];
+
+    if (skincare.skinType === 'dry' || skincare.concerns.includes('dryness')) {
+      recommendations.push({
+        title: 'Hydrating Serum',
+        description:
+          'Use a hydrating serum with hyaluronic acid or glycerin to improve moisture retention.',
+      });
+      recommendations.push({
+        title: 'Barrier Moisturizer',
+        description:
+          'Choose a moisturizer with ceramides to support the skin barrier and reduce tightness.',
+      });
+    }
+
+    if (skincare.skinType === 'oily' || skincare.concerns.includes('oiliness')) {
+      recommendations.push({
+        title: 'Lightweight Moisturizer',
+        description:
+          'Use a lightweight, non-comedogenic moisturizer to hydrate without feeling greasy.',
+      });
+    }
 
     if (skincare.concerns.includes('acne')) {
       recommendations.push({
         title: 'Niacinamide Serum',
         description:
-          'Use niacinamide serum to help calm blemish-prone skin and support oil balance.',
-      });
-    }
-
-    if (skincare.concerns.includes('dryness')) {
-      recommendations.push({
-        title: 'Hydrating Serum',
-        description:
-          'Add a hydrating serum with hyaluronic acid to improve moisture retention.',
+          'Use niacinamide to help calm blemish-prone skin and support oil balance.',
       });
     }
 
@@ -200,7 +201,7 @@ export class SkinTestAnalysisService {
       recommendations.push({
         title: 'Eye Cream',
         description:
-          'Use an eye cream with hydrating ingredients to improve under-eye appearance.',
+          'Use a hydrating eye cream to improve the appearance of the under-eye area.',
       });
     }
 
@@ -208,7 +209,7 @@ export class SkinTestAnalysisService {
       recommendations.push({
         title: 'Barrier Repair Cream',
         description:
-          'Use a barrier-supporting cream with ceramides to reduce irritation and redness.',
+          'Use a barrier-support cream with soothing ingredients and avoid harsh actives for now.',
       });
     }
 

@@ -238,8 +238,8 @@ export default function SkinTestPage() {
 
     context.drawImage(video, 0, 0, width, height);
 
-    const dataUrl = canvas.toDataURL('image/png');
-    const file = dataUrlToFile(dataUrl, `camera-capture-${Date.now()}.png`);
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+    const file = dataUrlToFile(dataUrl, `camera-capture-${Date.now()}.jpg`);
 
     setSelectedFile(file);
     setImage(dataUrl);
